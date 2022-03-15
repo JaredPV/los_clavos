@@ -1,21 +1,34 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package los_clavos;
 
-/**
- *
- * @author jared
- */
+import controlador.Controlador;
+import modelo.MDB;
+import modelo.Usuario;
+import vista.EditarProducto;
+import vista.Inicio;
+import vista.Inventario;
+import vista.NuevoProducto;
+import vista.Reportes;
+import vista.SignIn;
+import vista.Sucursales;
+
+
 public class Los_clavos {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        // MODELOS
+        MDB MMDB = new MDB();
+        Usuario MUsuario = new Usuario();
+        
+        // VISTAS
+        SignIn VSign = new SignIn();
+        Inicio VInicio = new Inicio();
+        Reportes VReportes = new Reportes();
+        Sucursales VSucursales = new Sucursales();
+        Inventario VInventario = new Inventario();
+        NuevoProducto VNuevo = new NuevoProducto();
+        EditarProducto VEditar = new EditarProducto();
+        Controlador ctrl = new Controlador(MUsuario, MMDB, VSign, VInicio, VReportes, VSucursales, VInventario, VNuevo, VEditar);
+        ctrl.iniciar();
     }
     
 }

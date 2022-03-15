@@ -33,7 +33,7 @@ public class Inicio extends javax.swing.JFrame {
         lblTitle = new javax.swing.JLabel();
         btnReportes = new javax.swing.JButton();
         btnInventario = new javax.swing.JButton();
-        btnReportes1 = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,13 +96,13 @@ public class Inicio extends javax.swing.JFrame {
             }
         });
 
-        btnReportes1.setBackground(new java.awt.Color(255, 0, 0));
-        btnReportes1.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
-        btnReportes1.setForeground(new java.awt.Color(0, 0, 0));
-        btnReportes1.setText("Salir");
-        btnReportes1.addActionListener(new java.awt.event.ActionListener() {
+        btnSalir.setBackground(new java.awt.Color(255, 0, 0));
+        btnSalir.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
+        btnSalir.setForeground(new java.awt.Color(0, 0, 0));
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReportes1ActionPerformed(evt);
+                btnSalirActionPerformed(evt);
             }
         });
 
@@ -124,7 +124,7 @@ public class Inicio extends javax.swing.JFrame {
                         .addComponent(lblTitle))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(324, 324, 324)
-                        .addComponent(btnReportes1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -138,7 +138,7 @@ public class Inicio extends javax.swing.JFrame {
                     .addComponent(btnReportes, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnInventario, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
-                .addComponent(btnReportes1)
+                .addComponent(btnSalir)
                 .addGap(43, 43, 43))
         );
 
@@ -154,9 +154,9 @@ public class Inicio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnInventarioActionPerformed
 
-    private void btnReportes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportes1ActionPerformed
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnReportes1ActionPerformed
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -196,7 +196,7 @@ public class Inicio extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnInventario;
     public javax.swing.JButton btnReportes;
-    public javax.swing.JButton btnReportes1;
+    public javax.swing.JButton btnSalir;
     public javax.swing.JLabel lblBrand;
     public javax.swing.JLabel lblNombre;
     public javax.swing.JLabel lblTitle;

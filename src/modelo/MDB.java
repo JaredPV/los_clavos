@@ -21,13 +21,13 @@ public class MDB extends Conexion {
     ResultSet rs;
     
     
-    public boolean inicioSesion (Usuario u){
+    public boolean inicioSesion (String noEmpleado, String password, Usuario u){
         con = getConexion();
         String sql = "SELECT * FROM usuario WHERE numeroEmpleado=? AND pass=? LIMIT 1";
         try{
             ps = con.prepareCall(sql);
-            ps.setInt(1, u.getNumeroEmpleado());
-            ps.setString(2, u.getPass());
+            ps.setInt(1, Integer.parseInt(noEmpleado));
+            ps.setString(2, password);
             rs = ps.executeQuery();
             if (rs.next()){
                 u.setNumeroEmpleado(rs.getInt(1));
@@ -64,13 +64,18 @@ public class MDB extends Conexion {
         return datos;
     }
     
-    public List listadoCerrado(Usuario u){
+    public List listadoCerrado(Usuario u, int sucursal){
         List<Producto>datos = new ArrayList<>();
         con = getConexion();
         String sql = "SELECT * FROM producto P JOIN inventario I WHERE P.idProducto = I.idProducto AND I.idSucursal=?";
         try{
             ps = con.prepareCall(sql);
-            ps.setInt(1, u.getIdSucursal());
+            if (u.isAdmin()){
+                ps.setInt(1, sucursal);
+            }else{
+                ps.setInt(1, u.getIdSucursal());
+            }
+            
             rs = ps.executeQuery();
             while (rs.next()){
                 Producto p = new Producto();

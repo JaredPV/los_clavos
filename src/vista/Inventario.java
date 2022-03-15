@@ -87,7 +87,7 @@ public class Inventario extends javax.swing.JFrame {
         btnReportes.setForeground(new java.awt.Color(0, 0, 0));
         btnReportes.setText("Reportes");
 
-        btnInventario.setBackground(new java.awt.Color(102, 153, 255));
+        btnInventario.setBackground(new java.awt.Color(102, 102, 255));
         btnInventario.setFont(new java.awt.Font("Verdana", 0, 31)); // NOI18N
         btnInventario.setForeground(new java.awt.Color(0, 0, 0));
         btnInventario.setText("Inventario");
@@ -96,7 +96,7 @@ public class Inventario extends javax.swing.JFrame {
         pnlTabla.setForeground(new java.awt.Color(0, 0, 0));
         pnlTabla.setFont(new java.awt.Font("Verdana", 0, 15)); // NOI18N
 
-        tabla.setFont(new java.awt.Font("Verdana", 0, 20)); // NOI18N
+        tabla.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         tabla.setForeground(new java.awt.Color(0, 0, 0));
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -248,18 +248,18 @@ public class Inventario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnEditar;
+    public javax.swing.JButton btnBuscar;
+    public javax.swing.JButton btnEditar;
     public javax.swing.JButton btnInicio;
     public javax.swing.JButton btnInventario;
-    private javax.swing.JButton btnNuevo;
+    public javax.swing.JButton btnNuevo;
     public javax.swing.JButton btnReportes;
     public javax.swing.JLabel lblBrand;
     public javax.swing.JLabel lblEmpleado;
     public javax.swing.JLabel lblInventario;
     public javax.swing.JPanel pnlEmpleado;
-    private javax.swing.JScrollPane pnlTabla;
-    private javax.swing.JTable tabla;
+    public javax.swing.JScrollPane pnlTabla;
+    public javax.swing.JTable tabla;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

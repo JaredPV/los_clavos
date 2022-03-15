@@ -87,7 +87,7 @@ public class Sucursales extends javax.swing.JFrame {
         btnReportes.setForeground(new java.awt.Color(0, 0, 0));
         btnReportes.setText("Reportes");
 
-        btnInventario.setBackground(new java.awt.Color(102, 153, 255));
+        btnInventario.setBackground(new java.awt.Color(102, 102, 255));
         btnInventario.setFont(new java.awt.Font("Verdana", 0, 31)); // NOI18N
         btnInventario.setForeground(new java.awt.Color(0, 0, 0));
         btnInventario.setText("Inventario");
