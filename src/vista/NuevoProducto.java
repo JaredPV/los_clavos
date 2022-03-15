@@ -11,9 +11,6 @@ package vista;
  */
 public class NuevoProducto extends javax.swing.JFrame {
 
-    /**
-     * Creates new form plantilla
-     */
     public NuevoProducto() {
         initComponents();
     }
@@ -95,6 +92,11 @@ public class NuevoProducto extends javax.swing.JFrame {
         txtUnidades.setBackground(new java.awt.Color(204, 255, 255));
         txtUnidades.setFont(new java.awt.Font("Verdana", 0, 18)); // NOI18N
         txtUnidades.setForeground(new java.awt.Color(0, 0, 0));
+        txtUnidades.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtUnidadesKeyTyped(evt);
+            }
+        });
 
         lblNombre.setFont(new java.awt.Font("Verdana", 0, 20)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(0, 0, 0));
@@ -180,6 +182,11 @@ public class NuevoProducto extends javax.swing.JFrame {
     private void cbTiendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTiendaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbTiendaActionPerformed
+
+    private void txtUnidadesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUnidadesKeyTyped
+        char x = evt.getKeyChar();
+        if (x<'0'||x>'9') evt.consume();
+    }//GEN-LAST:event_txtUnidadesKeyTyped
 
     /**
      * @param args the command line arguments

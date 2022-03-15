@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,9 +22,9 @@ public class MDB extends Conexion {
     ResultSet rs;
     
     
-    public boolean inicioSesion (String noEmpleado, String password, Usuario u){
+    public boolean inicioSesion (String noEmpleado, String password, Usuario u, Sucursal s){
         con = getConexion();
-        String sql = "SELECT * FROM usuario WHERE numeroEmpleado=? AND pass=? LIMIT 1";
+        String sql = "SELECT * FROM usuario U JOIN sucursal S WHERE U.idSucursal = S.idSucursal AND numeroEmpleado=? AND pass=? LIMIT 1";
         try{
             ps = con.prepareCall(sql);
             ps.setInt(1, Integer.parseInt(noEmpleado));
@@ -35,11 +36,13 @@ public class MDB extends Conexion {
                 u.setPass(rs.getString(3));
                 u.setAdmin(rs.getBoolean(4));
                 u.setIdSucursal(rs.getInt(5));
+                s.setIdSucursal(rs.getInt(6));
+                s.setNombre(rs.getString(7));
                 return true;
             }
             return false;
         }catch(SQLException e){
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -59,7 +62,7 @@ public class MDB extends Conexion {
                 datos.add(p);
             }
         }catch (SQLException e){
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
         }
         return datos;
     }
@@ -86,8 +89,92 @@ public class MDB extends Conexion {
                 datos.add(p);
             }
         }catch (SQLException e){
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
         }
         return datos;
+    }
+    
+    public boolean nuevoProducto(Producto p, Usuario u, int sucursal){
+        int cantidad = p.getCantidad();
+        con = getConexion();
+        String sql = "SELECT * FROM producto WHERE nombre=? AND marca=? LIMIT 1";
+        try{
+            ps = con.prepareCall(sql);
+            ps.setString(1, p.getNombre());
+            ps.setString(2, p.getMarca());
+            rs = ps.executeQuery();
+            if (rs.next()){
+                p.setCantidad(p.getCantidad()+rs.getInt("cantidad"));
+                p.setIdProducto(rs.getInt("idProducto"));
+                sql = "SELECT * FROM inventario WHERE idProducto=? AND idSucursal=? LIMIT 1";
+                ps = con.prepareCall(sql);
+                ps.setInt(1, p.getIdProducto());
+                ps.setInt(2, sucursal);
+                rs = ps.executeQuery();
+                if(rs.next()){
+                   return false; 
+                }else {
+                    sql = "INSERT INTO inventario(idSucursal, idProducto, cantidad) VALUES (?,?,?)";
+                    try{
+                        ps = con.prepareCall(sql);
+                        ps.setInt(1, sucursal);
+                        ps.setInt(2, p.getIdProducto());
+                        ps.setInt(3, cantidad);
+                        ps.executeUpdate();
+                    }catch (SQLException e){
+                        JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+                        System.out.println(e);
+                    }
+                    sql = "UPDATE producto SET cantidad=? WHERE idProducto=?";
+                    try{
+                        ps = con.prepareCall(sql);
+                        ps.setInt(1, p.getCantidad());
+                        ps.setInt(2, p.getIdProducto());
+                        ps.executeUpdate();
+                    }catch (SQLException e){
+                        JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+                        System.out.println(e);
+                    }
+                }
+            }else{
+                sql = "INSERT INTO producto(nombre,marca,cantidad) VALUES (?,?,?)";
+                try{
+                    ps = con.prepareCall(sql);
+                    ps.setString(1, p.getNombre());
+                    ps.setString(2, p.getMarca());
+                    ps.setInt(3, cantidad);
+                    ps.executeUpdate();
+                }catch (SQLException e){
+                    JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+                    System.out.println(e);
+                }
+                sql = "SELECT idProducto FROM producto WHERE nombre=? AND marca=? LIMIT 1";
+                try{
+                    ps = con.prepareCall(sql);
+                    ps.setString(1, p.getNombre());
+                    ps.setString(2, p.getMarca());
+                    rs = ps.executeQuery();
+                    if(rs.next()) p.setIdProducto(rs.getInt(1));
+                }catch (SQLException e){
+                    JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+                    System.out.println(e);
+                }
+                sql = "INSERT INTO inventario(idSucursal, idProducto, cantidad) VALUES (?,?,?)";
+                try{
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, sucursal);
+                    ps.setInt(2, p.getIdProducto());
+                    ps.setInt(3, cantidad);
+                    ps.executeUpdate();
+                }catch (SQLException e){
+                    JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+                    System.out.println(e);
+                }
+            }
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e);
+        }
+        return true;
     }
 }
