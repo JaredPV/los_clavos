@@ -35,6 +35,7 @@ public class Controlador implements ActionListener{
     public EditarProducto VEditar;
     
     public int sucursalSeleccionada;
+    public boolean buscado;
     public DefaultTableModel modelo = new DefaultTableModel();
     public Controlador (Usuario MUsuario, Producto MProducto, Sucursal MSucursal, MDB MMDB, SignIn VSign, Inicio VInicio, Reportes VReportes, Sucursales VSucursales, Inventario VInventario, NuevoProducto VNuevo, EditarProducto VEditar){
         // VARIABLES DE MODELOS
@@ -49,6 +50,7 @@ public class Controlador implements ActionListener{
         this.VSucursales = VSucursales;
         this.VInventario = VInventario;
         this.VNuevo = VNuevo;
+        this.VEditar = VEditar;
         // VARIABLES BOTONES
         this.VSign.btnEntrar.addActionListener(this);
         this.VInicio.btnInventario.addActionListener(this);
@@ -69,6 +71,9 @@ public class Controlador implements ActionListener{
         this.VInventario.btnInicio.addActionListener(this);
         this.VInventario.btnReportes.addActionListener(this);
         this.VNuevo.btnAgregar.addActionListener(this);
+        this.VEditar.btnBuscar.addActionListener(this);
+        this.VEditar.btnEditar.addActionListener(this);
+        this.VEditar.btnEliminar.addActionListener(this);
     }
     
     public void iniciar(){
@@ -152,17 +157,20 @@ public class Controlador implements ActionListener{
            VNuevo.cbTienda.setSelectedIndex(MUsuario.getIdSucursal()-1);
            VNuevo.cbTienda.disable();
         }else{
-            VNuevo.cbTienda.setSelectedIndex(MUsuario.getIdSucursal()-1);
+            VNuevo.cbTienda.setSelectedIndex(sucursalSeleccionada-1);
             VNuevo.cbTienda.enable();
         }
     }
     
     public void iniciarEditarP(){
+        buscado=false;
         VEditar.btnBuscar.setEnabled(true);
         VEditar.txtBuscar.setEnabled(true);
+        VEditar.txtBuscar.setText(null);
         VEditar.txtMarca.setText(null);
         VEditar.txtNombre.setText(null);
         VEditar.txtUnidades.setText(null);
+        VEditar.lblTienda.setText(VInventario.lblInventario.getText());
         VEditar.setTitle("EDITAR PRODUCTO");
         VEditar.setLocationRelativeTo(null);
         VEditar.setVisible(true);
@@ -278,7 +286,7 @@ public class Controlador implements ActionListener{
            MProducto.setNombre(VNuevo.txtNombre.getText().toUpperCase());
            MProducto.setMarca(VNuevo.txtMarca.getText().toUpperCase());
            MProducto.setCantidad(Integer.parseInt(VNuevo.txtUnidades.getText()));
-           if(MMDB.nuevoProducto(MProducto, MUsuario, VNuevo.cbTienda.getSelectedIndex()+1)){
+           if(MMDB.nuevoProducto(MProducto, VNuevo.cbTienda.getSelectedIndex()+1)){
                JOptionPane.showMessageDialog(null, "Nuevo registro exitoso","ESTADO DE REGISTRO",JOptionPane.INFORMATION_MESSAGE);
            }else{
                JOptionPane.showMessageDialog(null, "El producto ya existe en la sucursal seleccionada", "ESTADO DE REGISTRO", JOptionPane.ERROR_MESSAGE);
@@ -287,14 +295,47 @@ public class Controlador implements ActionListener{
            iniciarInicio();
        }
        if(e.getSource()==VEditar.btnBuscar){
+           MProducto.setIdProducto(Integer.parseInt(VEditar.txtBuscar.getText()));
+           if(!MUsuario.isAdmin()) sucursalSeleccionada = MUsuario.getIdSucursal();
            if(MMDB.buscarProducto(MProducto, sucursalSeleccionada)){
                VEditar.btnBuscar.setEnabled(false);
                VEditar.txtBuscar.setEnabled(false);
+               VEditar.txtNombre.setText(MProducto.getNombre());
+               VEditar.txtMarca.setText(MProducto.getMarca());
+               VEditar.txtUnidades.setText(Integer.toString(MProducto.getCantidad()));
+               buscado=true;
            }
-       }else if (e.getSource()==VEditar.btnEditar){
-           
-       }else if (e.getSource()==VEditar.btnEliminar){
-           
+       }else if (e.getSource()==VEditar.btnEditar && buscado){
+           int cantidadOriginal = MProducto.getCantidad();
+           if (MProducto.getNombre().equals(VEditar.txtNombre.getText().toUpperCase()) && MProducto.getMarca().equals(VEditar.txtMarca.getText().toUpperCase())){
+               MProducto.setCantidad(Integer.parseInt(VEditar.txtUnidades.getText()));
+               if(MMDB.editarCantidad(MProducto, sucursalSeleccionada, cantidadOriginal)){
+                   JOptionPane.showMessageDialog(null, "Modificación exitosa","ESTADO DE MODIFICACIÓN",JOptionPane.INFORMATION_MESSAGE);
+               }else{
+                   JOptionPane.showMessageDialog(null, "No se pudo realizar la modificación", "ESTADO DE MODIFICACIÓN", JOptionPane.ERROR_MESSAGE);
+               }
+               VEditar.dispose();
+               iniciarInicio();
+           }else{
+               MProducto.setNombre(VEditar.txtNombre.getText().toUpperCase());
+               MProducto.setMarca(VEditar.txtMarca.getText().toUpperCase());
+               MProducto.setCantidad(Integer.parseInt(VEditar.txtUnidades.getText()));
+               if(MMDB.editarProducto(MProducto, sucursalSeleccionada, cantidadOriginal)){
+                   JOptionPane.showMessageDialog(null, "Modificación exitosa","ESTADO DE MODIFICACIÓN",JOptionPane.INFORMATION_MESSAGE);
+               }else{
+                   JOptionPane.showMessageDialog(null, "No se pudo realizar la modificación", "ESTADO DE MODIFICACIÓN", JOptionPane.ERROR_MESSAGE);
+               }
+               VEditar.dispose();
+               iniciarInicio();
+           }
+       }else if (e.getSource()==VEditar.btnEliminar && buscado){
+           if(MMDB.eliminarProducto(MProducto, sucursalSeleccionada)){
+               JOptionPane.showMessageDialog(null, "Se eliminó el producto de la sucursal","ESTADO DE ELIMINACIÓN",JOptionPane.INFORMATION_MESSAGE);
+           }else{
+               JOptionPane.showMessageDialog(null, "No se pudo realizar la eliminación", "ESTADO DE ELIMINACIÓN", JOptionPane.ERROR_MESSAGE);
+           }
+           VEditar.dispose();
+           iniciarInicio();
        }
     }
     public static void main (String[] arg){

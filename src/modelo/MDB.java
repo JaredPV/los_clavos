@@ -70,7 +70,7 @@ public class MDB extends Conexion {
     public List listadoCerrado(Usuario u, int sucursal){
         List<Producto>datos = new ArrayList<>();
         con = getConexion();
-        String sql = "SELECT * FROM producto P JOIN inventario I WHERE P.idProducto = I.idProducto AND I.idSucursal=?";
+        String sql = "SELECT * FROM producto P JOIN inventario I WHERE P.idProducto = I.idProducto AND I.idSucursal=? ORDER BY P.idProducto ASC";
         try{
             ps = con.prepareCall(sql);
             if (u.isAdmin()){
@@ -94,7 +94,7 @@ public class MDB extends Conexion {
         return datos;
     }
     
-    public boolean nuevoProducto(Producto p, Usuario u, int sucursal){
+    public boolean nuevoProducto(Producto p, int sucursal){
         int cantidad = p.getCantidad();
         con = getConexion();
         String sql = "SELECT * FROM producto WHERE nombre=? AND marca=? LIMIT 1";
@@ -179,8 +179,162 @@ public class MDB extends Conexion {
     }
     
     public boolean buscarProducto(Producto P, int sucursal){
-        String sql = "SELECT * FROM producto P JOIN sucursal S WHERE P.idProducto=S.idProducto AND idSucursal=? AND idProducto?";
-       
+        con = getConexion();
+        String sql = "SELECT * FROM producto P JOIN inventario I WHERE P.idProducto=I.idProducto AND I.idSucursal=? AND I.idProducto=? LIMIT 1";
+        try{
+            ps = con.prepareCall(sql);
+            ps.setInt(1,sucursal);
+            ps.setInt(2, P.getIdProducto());
+            rs = ps.executeQuery();
+            if(rs.next()){
+                P.setIdProducto(rs.getInt(1));
+                P.setNombre(rs.getString(2));
+                P.setMarca(rs.getString(3));
+                P.setCantidad(rs.getInt(7));
+                return true;
+            }
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e);
+        }
+        
+        return false;
+    }
+    
+    public boolean editarProducto(Producto P, int sucursal, int cantidadOriginal){
+        con = getConexion();
+        String sql = "SELECT * FROM producto WHERE nombre=? AND marca=? LIMIT 1";
+        try{
+            ps = con.prepareCall(sql);
+            ps.setString(1, P.getNombre());
+            ps.setString(2, P.getMarca());
+            rs = ps.executeQuery();
+            if (rs.next()){
+                int id = rs.getInt(1);
+                int cantidadProducto=rs.getInt(4);
+                sql = "SELECT * FROM inventario WHERE idProducto=? AND idSucursal=? LIMIT 1";
+                ps = con.prepareCall(sql);
+                ps.setInt(1, id);
+                ps.setInt(2, sucursal);
+                rs = ps.executeQuery();
+                if (rs.next()){
+                    sql = "DELETE FROM inventario WHERE idProducto=? AND idSucursal=?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, P.getIdProducto());
+                    ps.setInt(2, sucursal);
+                    ps.executeUpdate();
+                    sql = "UPDATE inventario SET cantidad=? WHERE idProducto=? AND idSucursal=?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, rs.getInt(3)+P.getCantidad());
+                    ps.setInt(2, rs.getInt(2));
+                    ps.setInt(3, rs.getInt(1));
+                    ps.executeUpdate();
+                    sql = "UPDATE producto SET cantidad=cantidad-? WHERE idProducto =?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, cantidadOriginal);
+                    ps.setInt(2, P.getIdProducto());
+                    ps.executeUpdate();
+                    sql = "UPDATE producto SET cantidad=cantidad+? WHERE idProducto =?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, P.getCantidad());
+                    ps.setInt(2, id);
+                    ps.executeUpdate();
+                    return true;
+                }else{
+                    sql = "DELETE FROM inventario WHERE idProducto=? AND idSucursal=?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, P.getIdProducto());
+                    ps.setInt(2, sucursal);
+                    ps.executeUpdate();
+                    sql = "UPDATE producto SET cantidad=cantidad-? WHERE idProducto =?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, cantidadOriginal);
+                    ps.setInt(2, P.getIdProducto());
+                    ps.executeUpdate();
+                    sql = "UPDATE producto SET cantidad=cantidad+? WHERE idProducto =?";
+                    ps = con.prepareCall(sql);
+                    ps.setInt(1, P.getCantidad());
+                    ps.setInt(2, id);
+                    ps.executeUpdate();
+                    return nuevoProducto(P, sucursal);
+                    
+                }
+                
+            }else{
+                sql = "DELETE FROM inventario WHERE idProducto=? AND idSucursal=?";
+                ps = con.prepareCall(sql);
+                ps.setInt(1, P.getIdProducto());
+                ps.setInt(2, sucursal);
+                ps.executeUpdate();
+                sql = "UPDATE producto SET cantidad=cantidad-? WHERE idProducto =?";
+                ps = con.prepareCall(sql);
+                ps.setInt(1, cantidadOriginal);
+                ps.setInt(2, P.getIdProducto());
+                ps.executeUpdate();
+                return nuevoProducto(P, sucursal);
+            }
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e);
+        }
+        return true;
+    }
+    
+    public boolean editarCantidad (Producto P, int sucursal, int cantidadOriginal){
+        con = getConexion();
+        int cantidadAct;
+        String sql = "UPDATE inventario SET cantidad=? WHERE idProducto=? AND idSucursal=?";
+        try{
+            ps = con.prepareCall(sql);
+            ps.setInt(1, P.getCantidad());
+            ps.setInt(2, P.getIdProducto());
+            ps.setInt(3, sucursal);
+            ps.executeUpdate();
+            
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e); 
+        }
+        sql = "SELECT * FROM producto WHERE idProducto=? LIMIT 1";
+        try{
+           ps = con.prepareCall(sql);
+           ps.setInt(1, P.getIdProducto());
+           rs = ps.executeQuery();
+           if (rs.next()){
+               cantidadAct =(rs.getInt(4)-cantidadOriginal)+P.getCantidad();
+               sql = "UPDATE producto SET cantidad=? WHERE idProducto=?";
+               ps = con.prepareCall(sql);
+               ps.setInt(1, cantidadAct);
+               ps.setInt(2, P.getIdProducto());
+               ps.executeUpdate();
+           }else{
+               return false;
+           }
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e); 
+        }
+        return true;
+    }
+    
+    public boolean eliminarProducto(Producto P, int sucursal){
+        con = getConexion();
+        String sql = "DELETE FROM inventario WHERE idProducto=? AND idSucursal=?";
+        try{
+            ps = con.prepareCall(sql);
+            ps.setInt(1, P.getIdProducto());
+            ps.setInt(2, sucursal);
+            ps.executeUpdate();
+            sql = "UPDATE producto SET cantidad=cantidad-? WHERE idProducto =?";
+            ps = con.prepareCall(sql);
+            ps.setInt(1, P.getCantidad());
+            ps.setInt(2, P.getIdProducto());
+            ps.executeUpdate();
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e);
+            return false;
+        }
         return true;
     }
 }
