@@ -177,4 +177,10 @@ public class MDB extends Conexion {
         }
         return true;
     }
+    
+    public boolean buscarProducto(Producto P, int sucursal){
+        String sql = "SELECT * FROM producto P JOIN sucursal S WHERE P.idProducto=S.idProducto AND idSucursal=? AND idProducto?";
+       
+        return true;
+    }
 }

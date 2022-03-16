@@ -158,6 +158,14 @@ public class Controlador implements ActionListener{
     }
     
     public void iniciarEditarP(){
+        VEditar.btnBuscar.setEnabled(true);
+        VEditar.txtBuscar.setEnabled(true);
+        VEditar.txtMarca.setText(null);
+        VEditar.txtNombre.setText(null);
+        VEditar.txtUnidades.setText(null);
+        VEditar.setTitle("EDITAR PRODUCTO");
+        VEditar.setLocationRelativeTo(null);
+        VEditar.setVisible(true);
         
     }
 
@@ -258,6 +266,7 @@ public class Controlador implements ActionListener{
            iniciarNuevoP();
        }else if (e.getSource()==VInventario.btnEditar){
            VInventario.dispose();
+           iniciarEditarP();
        }else if (e.getSource()==VInventario.btnInicio){
            VInventario.dispose();
            iniciarInicio();
@@ -276,6 +285,16 @@ public class Controlador implements ActionListener{
            }
            VNuevo.dispose();
            iniciarInicio();
+       }
+       if(e.getSource()==VEditar.btnBuscar){
+           if(MMDB.buscarProducto(MProducto, sucursalSeleccionada)){
+               VEditar.btnBuscar.setEnabled(false);
+               VEditar.txtBuscar.setEnabled(false);
+           }
+       }else if (e.getSource()==VEditar.btnEditar){
+           
+       }else if (e.getSource()==VEditar.btnEliminar){
+           
        }
     }
     public static void main (String[] arg){

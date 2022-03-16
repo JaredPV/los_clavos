@@ -85,6 +85,11 @@ public class EditarProducto extends javax.swing.JFrame {
         txtUnidades.setBackground(new java.awt.Color(204, 255, 255));
         txtUnidades.setFont(new java.awt.Font("Verdana", 0, 18)); // NOI18N
         txtUnidades.setForeground(new java.awt.Color(0, 0, 0));
+        txtUnidades.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtUnidadesKeyTyped(evt);
+            }
+        });
 
         lblNombre.setFont(new java.awt.Font("Verdana", 0, 20)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(0, 0, 0));
@@ -115,6 +120,11 @@ public class EditarProducto extends javax.swing.JFrame {
 
         txtBuscar.setFont(new java.awt.Font("Verdana", 0, 20)); // NOI18N
         txtBuscar.setForeground(new java.awt.Color(0, 0, 0));
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyTyped(evt);
+            }
+        });
 
         btnBuscar.setFont(new java.awt.Font("Verdana", 0, 20)); // NOI18N
         btnBuscar.setForeground(new java.awt.Color(0, 51, 255));
@@ -202,6 +212,16 @@ public class EditarProducto extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtUnidadesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUnidadesKeyTyped
+        char x = evt.getKeyChar();
+        if (x<'0'||x>'9') evt.consume();
+    }//GEN-LAST:event_txtUnidadesKeyTyped
+
+    private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
+        char x = evt.getKeyChar();
+        if (x<'0'||x>'9') evt.consume();
+    }//GEN-LAST:event_txtBuscarKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -241,7 +261,7 @@ public class EditarProducto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscar;
+    public javax.swing.JButton btnBuscar;
     public javax.swing.JButton btnEditar;
     public javax.swing.JButton btnEliminar;
     public javax.swing.JLabel lblBrand;
@@ -252,7 +272,7 @@ public class EditarProducto extends javax.swing.JFrame {
     public javax.swing.JLabel lblTitle;
     public javax.swing.JLabel lblUnidades;
     public javax.swing.JPanel pnlEmpleado;
-    private javax.swing.JTextField txtBuscar;
+    public javax.swing.JTextField txtBuscar;
     public javax.swing.JTextField txtMarca;
     public javax.swing.JTextField txtNombre;
     public javax.swing.JTextField txtUnidades;
